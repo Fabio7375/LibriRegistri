@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Libri e Registri Contabili - Studio Basso De Bortoli Zambelli</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #e0f2fe 100%);
+            min-height: 100vh;
+            padding: 24px;
+            color: #334155;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #1e293b 0%, #1e40af 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 16px;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            color: #64748b;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .year-selector {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .year-selector label {
+            font-weight: 600;
+            margin-right: 12px;
+            color: #475569;
+        }
+
+        .year-selector input {
+            padding: 8px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            background: white;
+            transition: all 0.3s ease;
+        }
+
+        .year-selector input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .info-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            margin-bottom: 48px;
+        }
+
+        .info-card {
+            background: white;
+            padding: 24px;
+            border-radius: 16px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .info-card:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .info-card h3 {
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: #1e293b;
+        }
+
+        .info-card p {
+            color: #64748b;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 32px;
+        }
+
+        .books-section h2 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 24px;
+        }
+
+        .books-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+        }
+
+        .book-card {
+            background: white;
+            padding: 24px;
+            border-radius: 16px;
+            border: 2px solid #e2e8f0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .book-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+        }
+
+        .book-card.active {
+            border-color: #3b82f6;
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            box-shadow: 0 4px 16px rgba(59, 130, 246, 0.2);
+        }
+
+        .book-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .book-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .book-icon svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .book-indicators {
+            display: flex;
+            gap: 4px;
+        }
+
+        .indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .indicator.yellow { background: #fbbf24; }
+        .indicator.blue { background: #3b82f6; }
+
+        .book-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 8px;
+        }
+
+        .book-deadline {
+            display: flex;
+            align-items: center;
+            color: #64748b;
+            font-size: 14px;
+            margin-bottom: 16px;
+        }
+
+        .book-deadline svg {
+            width: 16px;
+            height: 16px;
+            margin-right: 8px;
+        }
+
+        .book-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .book-tags {
+            display: flex;
+            gap: 8px;
+        }
+
+        .tag {
+            padding: 4px 8px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .tag.numerazione {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .tag.imposta {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .chevron {
+            width: 20px;
+            height: 20px;
+            color: #94a3b8;
+            transition: transform 0.3s ease;
+        }
+
+        .book-card.active .chevron {
+            transform: rotate(90deg);
+        }
+
+        .detail-panel {
+            background: white;
+            border-radius: 16px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 24px;
+        }
+
+        .detail-header {
+            display: flex;
+            align-items: center;
+            padding: 24px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .detail-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 16px;
+        }
+
+        .detail-icon svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .detail-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        .detail-content {
+            padding: 24px;
+        }
+
+        .detail-section {
+            margin-bottom: 16px;
+        }
+
+        .detail-section-header {
+            display: flex;
+            align-items: center;
+            justify-content: between;
+            padding: 12px 16px;
+            background: #f8fafc;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .detail-section-header:hover {
+            background: #f1f5f9;
+        }
+
+        .detail-section-header svg {
+            width: 20px;
+            height: 20px;
+            margin-right: 12px;
+            color: #64748b;
+        }
+
+        .detail-section-title {
+            font-weight: 600;
+            color: #1e293b;
+            flex: 1;
+        }
+
+        .detail-section-content {
+            padding: 16px;
+            background: white;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            margin-top: 8px;
+            display: none;
+        }
+
+        .detail-section.expanded .detail-section-content {
+            display: block;
+        }
+
+        .detail-section.expanded .detail-chevron {
+            transform: rotate(90deg);
+        }
+
+        .detail-chevron {
+            width: 20px;
+            height: 20px;
+            color: #94a3b8;
+            transition: transform 0.3s ease;
+        }
+
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .detail-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .detail-label {
+            color: #64748b;
+        }
+
+        .detail-value {
+            font-weight: 500;
+            color: #1e293b;
+            text-align: right;
+        }
+
+        .placeholder {
+            text-align: center;
+            padding: 48px 24px;
+        }
+
+        .placeholder-icon {
+            width: 64px;
+            height: 64px;
+            background: #f1f5f9;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+        }
+
+        .placeholder-icon svg {
+            width: 32px;
+            height: 32px;
+            color: #94a3b8;
+        }
+
+        .placeholder h3 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 8px;
+        }
+
+        .placeholder p {
+            color: #64748b;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 48px;
+            padding: 24px;
+            background: white;
+            border-radius: 16px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .footer p:first-child {
+            color: #64748b;
+            margin-bottom: 8px;
+        }
+
+        .footer p:last-child {
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        @media (max-width: 1024px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .detail-panel {
+                position: static;
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 16px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .books-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1 id="main-title">Libri e Registri Contabili 2025</h1>
+            <p>Gestione completa degli adempimenti per stampa e conservazione dei documenti contabili</p>
+        </div>
+
+        <!-- Year Selector -->
+        <div class="year-selector">
+            <label for="year-input">Anno di competenza:</label>
+            <input type="number" id="year-input" value="2025" min="2020" max="2030">
+        </div>
+
+        <!-- Info Cards -->
+        <div class="info-cards">
+            <div class="info-card">
+                <h3>Decreto Semplificazioni 73/2022</h3>
+                <p>Abrogato obbligo conservazione sostitutiva digitale. Sufficiente aggiornamento su supporto informatico con stampa solo su richiesta durante verifiche.</p>
+            </div>
+            <div class="info-card">
+                <h3>Imposta Bollo Digitale</h3>
+                <p>Ogni 2500 registrazioni con F24 cod. 2501 entro 120 giorni dalla chiusura esercizio. Per registrazione si intende ogni singolo accadimento contabile.</p>
+            </div>
+            <div class="info-card">
+                <h3>Conservazione</h3>
+                <p>Civile: 10 anni dalla data ultima registrazione - Fiscale: 5 anni dal 31/12 dell'anno di presentazione dichiarazione</p>
+            </div>
+            <div class="info-card">
+                <h3>Modalità Operative</h3>
+                <p>Scritture ordinate, senza spazi in bianco, interlinee o trasporti a margine. Vietate abrasioni e cancellazioni. Correzioni devono lasciare leggibile il testo originale.</p>
+            </div>
+            <div class="info-card">
+                <h3>Partitari e Mastrini</h3>
+                <p>Devono essere stampati abbinati al libro giornale, firmati ma non numerati progressivamente. Le schede di mastro dopo chiusura dei conti.</p>
+            </div>
+            <div class="info-card">
+                <h3>Termine Aggiornamento</h3>
+                <p>Le scritture contabili devono essere aggiornate entro 60 giorni dalla registrazione. Solo le scritture di chiusura entro il termine dichiarazione.</p>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <!-- Books Section -->
+            <div class="books-section">
+                <h2>Seleziona Libro o Registro</h2>
+                <div class="books-grid" id="books-grid">
+                    <!-- Books will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Detail Panel -->
+            <div class="detail-panel" id="detail-panel">
+                <div class="placeholder">
+                    <div class="placeholder-icon">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                        </svg>
+                    </div>
+                    <h3>Seleziona un Libro</h3>
+                    <p>Clicca su un libro o registro per vedere tutti gli adempimenti</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>Con l'occasione porgiamo i nostri più cordiali saluti</p>
+            <p>Studio ass.to Basso - De Bortoli - Zambelli</p>
+        </div>
+    </div>
+
+    <script>
+        class LibriContabiliApp {
+            constructor() {
+                this.currentYear = 2025;
+                this.activeBook = null;
+                this.expandedSections = {};
+                
+                this.init();
+            }
+
+            init() {
+                this.setupEventListeners();
+                this.updateYear(this.currentYear);
+                this.renderBooks();
+            }
+
+            setupEventListeners() {
+                const yearInput = document.getElementById('year-input');
+                yearInput.addEventListener('change', (e) => {
+                    this.updateYear(parseInt(e.target.value));
+                });
+            }
+
+            updateYear(year) {
+                this.currentYear = year;
+                document.getElementById('main-title').textContent = `Libri e Registri Contabili ${year}`;
+                this.renderBooks();
+                if (this.activeBook) {
+                    this.renderDetailPanel(this.activeBook);
+                }
+            }
+
+            getBooks() {
+                const nextYear = this.currentYear + 1;
+                return [
+                    {
+                        id: 'giornale',
+                        title: 'Libro Giornale',
+                        icon: 'file-text',
+                        color: 'from-blue-50 to-blue-100',
+                        iconColor: '#2563eb',
+                        deadline: `31/01/${nextYear}`,
+                        requirements: { numerazione: true, imposta: true },
+                        details: {
+                            aggiornamento: 'Entro 60 giorni dalla registrazione (scritture di chiusura entro termine dichiarazione)',
+                            stampa: `Entro 31/01/${nextYear}`,
+                            numerazione: `Progressiva annuale con indicazione anno (es. ${this.currentYear}/1, ${this.currentYear}/2)`,
+                            imposta: 'Società capitali: €16/100 pagine - Altri: €32/100 pagine',
+                            tassa: 'Società capitali: €309,87 (cap. ≤ €516.456,89) o €516,46 (cap. > €516.456,89)',
+                            conservazione: 'Civile: 10 anni dalla data ultima registrazione - Fiscale: 5 anni dal 31/12 dell\'anno presentazione dichiarazione',
+                            modalita: 'Marca da bollo su prima pagina o F23 (cod. 458T). Numerazione progressiva obbligatoria.',
+                            ausiliarie: 'Stampare anche partitari/mastrini abbinati al libro giornale. Vanno firmati ma non numerati.'
+                        }
+                    },
+                    {
+                        id: 'inventari',
+                        title: 'Libro Inventari',
+                        icon: 'calculator',
+                        color: 'from-green-50 to-green-100',
+                        iconColor: '#059669',
+                        deadline: `31/01/${nextYear}`,
+                        requirements: { numerazione: true, imposta: true },
+                        details: {
+                            aggiornamento: 'Al 31 dicembre di ogni anno',
+                            stampa: `Entro 31/01/${nextYear}`,
+                            numerazione: `Progressiva annuale (anno omettibile se poche pagine). Es. ${this.currentYear}/1, ${this.currentYear}/2`,
+                            imposta: 'Società capitali: €16/100 pagine - Altri: €32/100 pagine',
+                            tassa: 'Come libro giornale',
+                            conservazione: 'Civile: 10 anni dalla data ultima registrazione - Fiscale: 5 anni dal 31/12 dell\'anno presentazione dichiarazione',
+                            modalita: 'Marca da bollo su prima pagina o F23 (cod. 458T). Numerazione progressiva obbligatoria.',
+                            contenuto: 'Inventario al 31 dicembre con indicazione di tutti i beni e rapporti giuridici'
+                        }
+                    },
+                    {
+                        id: 'iva',
+                        title: 'Registri IVA',
+                        icon: 'euro',
+                        color: 'from-purple-50 to-purple-100',
+                        iconColor: '#7c3aed',
+                        deadline: `31/01/${nextYear}`,
+                        requirements: { numerazione: true, imposta: false },
+                        details: {
+                            aggiornamento: 'Vendite: entro 15 giorni - Acquisti: entro il mese successivo',
+                            stampa: `Entro 31/01/${nextYear}`,
+                            numerazione: `Progressiva annuale con indicazione anno (es. ${this.currentYear}/1, ${this.currentYear}/2)`,
+                            imposta: 'Non dovuta',
+                            tassa: 'Non dovuta',
+                            conservazione: 'Civile: 10 anni dalla data ultima registrazione - Fiscale: 5 anni dal 31/12 dell\'anno presentazione dichiarazione',
+                            modalita: 'Solo numerazione progressiva, senza bollo né vidimazione',
+                            digitale: 'Se digitali: €16 ogni 2500 registrazioni con F24 cod. 2501 entro 120gg chiusura esercizio'
+                        }
+                    },
+                    {
+                        id: 'beni',
+                        title: 'Registro Beni Ammortizzabili',
+                        icon: 'building',
+                        color: 'from-orange-50 to-orange-100',
+                        iconColor: '#ea580c',
+                        deadline: `31/10/${this.currentYear} (redazione) - 31/01/${nextYear} (stampa)`,
+                        requirements: { numerazione: true, imposta: false },
+                        details: {
+                            redazione: `Entro 31/10/${this.currentYear} (termine presentazione dichiarazione)`,
+                            stampa: `Entro 31/01/${nextYear} (3 mesi dal termine dichiarazione)`,
+                            numerazione: 'Progressiva annuale con indicazione anno',
+                            imposta: 'Non dovuta',
+                            conservazione: 'Civile: 10 anni dalla data ultima registrazione - Fiscale: 5 anni dal 31/12 dell\'anno presentazione dichiarazione',
+                            modalita: 'Solo numerazione progressiva, senza bollo né vidimazione',
+                            contenuto: 'Registrazione di ogni singolo cespite ammortizzabile'
+                        }
+                    },
+                    {
+                        id: 'magazzino',
+                        title: 'Scritture Ausiliarie Magazzino',
+                        icon: 'archive',
+                        color: 'from-teal-50 to-teal-100',
+                        iconColor: '#0d9488',
+                        deadline: `31/01/${nextYear}`,
+                        requirements: { numerazione: false, imposta: false },
+                        details: {
+                            stampa: `Entro 31/01/${nextYear} (quando obbligatorie)`,
+                            obbligatorietà: 'Solo quando previste da normative specifiche',
+                            numerazione: 'Non richiesta numerazione progressiva',
+                            imposta: 'Non dovuta',
+                            conservazione: 'Civile: 10 anni - Fiscale: 5 anni',
+                            modalita: 'Senza bollo né vidimazione, ma vanno firmate'
+                        }
+                    }
+                ];
+            }
+
+            getIcon(iconName) {
+                const icons = {
+                    'file-text': '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>',
+                    'calculator': '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>',
+                    'euro': '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 2h8m2 4H7a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v8a2 2 0 01-2 2z"/>',
+                    'building': '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>',
+                    'archive': '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"/>',
+                    'calendar': '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>',
+                    'chevron-right': '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>',
+                    'chevron-down': '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>',
+                    'clock': '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>',
+                    'document': '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>',
+                    'clipboard': '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>',
+                    'folder': '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/>'
+                };
+                return icons[iconName] || icons['file-text'];
+            }
+
+            renderBooks() {
+                const booksGrid = document.getElementById('books-grid');
+                const books = this.getBooks();
+                
+                booksGrid.innerHTML = books.map(book => `
+                    <div class="book-card ${this.activeBook?.id === book.id ? 'active' : ''}" data-book-id="${book.id}">
+                        <div class="book-header">
+                            <div class="book-icon" style="background: linear-gradient(135deg, ${book.color});">
+                                <svg fill="none" stroke="${book.iconColor}" viewBox="0 0 24 24">
+                                    ${this.getIcon(book.icon)}
+                                </svg>
+                            </div>
+                            ${book.requirements.imposta ? `
+                                <div class="book-indicators">
+                                    <div class="indicator yellow"></div>
+                                    <div class="indicator blue"></div>
+                                </div>
+                            ` : ''}
+                        </div>
+                        <h3 class="book-title">${book.title}</h3>
+                        <div class="book-deadline">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                ${this.getIcon('calendar')}
+                            </svg>
+                            <span>${book.deadline}</span>
+                        </div>
+                        <div class="book-footer">
+                            <div class="book-tags">
+                                ${book.requirements.numerazione ? '<span class="tag numerazione">Numerazione</span>' : ''}
+                                ${book.requirements.imposta ? '<span class="tag imposta">Imposta</span>' : ''}
+                            </div>
+                            <svg class="chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                ${this.getIcon('chevron-right')}
+                            </svg>
+                        </div>
+                    </div>
+                `).join('');
+
+                // Add event listeners
+                booksGrid.querySelectorAll('.book-card').forEach(card => {
+                    card.addEventListener('click', (e) => {
+                        const bookId = e.currentTarget.getAttribute('data-book-id');
+                        const book = books.find(b => b.id === bookId);
+                        
+                        if (this.activeBook?.id === bookId) {
+                            this.activeBook = null;
+                            this.renderDetailPanel(null);
+                        } else {
+                            this.activeBook = book;
+                            this.renderDetailPanel(book);
+                        }
+                        
+                        this.renderBooks(); // Re-render to update active state
+                    });
+                });
+            }
+
+            renderDetailPanel(book) {
+                const detailPanel = document.getElementById('detail-panel');
+                
+                if (!book) {
+                    detailPanel.innerHTML = `
+                        <div class="placeholder">
+                            <div class="placeholder-icon">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    ${this.getIcon('file-text')}
+                                </svg>
+                            </div>
+                            <h3>Seleziona un Libro</h3>
+                            <p>Clicca su un libro o registro per vedere tutti gli adempimenti</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                detailPanel.innerHTML = `
+                    <div class="detail-header">
+                        <div class="detail-icon" style="background: linear-gradient(135deg, ${book.color});">
+                            <svg fill="none" stroke="${book.iconColor}" viewBox="0 0 24 24">
+                                ${this.getIcon(book.icon)}
+                            </svg>
+                        </div>
+                        <h3 class="detail-title">${book.title}</h3>
+                    </div>
+                    <div class="detail-content">
+                        ${this.renderDetailSection('deadlines', 'Scadenze e Aggiornamenti', 'calendar', book)}
+                        ${this.renderDetailSection('numbering', 'Numerazione e Modalità', 'document', book)}
+                        ${this.renderDetailSection('taxes', 'Imposte e Tasse', 'euro', book)}
+                        ${book.details.ausiliarie ? this.renderDetailSection('auxiliary', 'Scritture Ausiliarie', 'clipboard', book) : ''}
+                        ${this.renderDetailSection('conservation', 'Conservazione', 'folder', book)}
+                        ${book.details.digitale ? this.renderDetailSection('digital', 'Modalità Digitale', 'clock', book) : ''}
+                    </div>
+                `;
+
+                this.setupDetailEventListeners();
+            }
+
+            renderDetailSection(sectionId, title, icon, book) {
+                const isExpanded = this.expandedSections[sectionId];
+                
+                return `
+                    <div class="detail-section ${isExpanded ? 'expanded' : ''}" data-section="${sectionId}">
+                        <div class="detail-section-header">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                ${this.getIcon(icon)}
+                            </svg>
+                            <span class="detail-section-title">${title}</span>
+                            <svg class="detail-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                ${this.getIcon('chevron-right')}
+                            </svg>
+                        </div>
+                        <div class="detail-section-content">
+                            ${this.renderSectionContent(sectionId, book)}
+                        </div>
+                    </div>
+                `;
+            }
+
+            renderSectionContent(sectionId, book) {
+                switch(sectionId) {
+                    case 'deadlines':
+                        return `
+                            ${book.details.aggiornamento ? `
+                                <div class="detail-item">
+                                    <span class="detail-label">Aggiornamento:</span>
+                                    <span class="detail-value">${book.details.aggiornamento}</span>
+                                </div>
+                            ` : ''}
+                            ${book.details.redazione ? `
+                                <div class="detail-item">
+                                    <span class="detail-label">Redazione:</span>
+                                    <span class="detail-value">${book.details.redazione}</span>
+                                </div>
+                            ` : ''}
+                            <div class="detail-item">
+                                <span class="detail-label">Stampa:</span>
+                                <span class="detail-value">${book.details.stampa}</span>
+                            </div>
+                            ${book.details.obbligatorietà ? `
+                                <div class="detail-item">
+                                    <span class="detail-label">Obbligatorietà:</span>
+                                    <span class="detail-value">${book.details.obbligatorietà}</span>
+                                </div>
+                            ` : ''}
+                        `;
+                    case 'numbering':
+                        return `
+                            <div class="detail-item">
+                                <span class="detail-label">Numerazione:</span>
+                                <span class="detail-value">${book.details.numerazione}</span>
+                            </div>
+                            ${book.details.modalita ? `
+                                <div style="margin-top: 16px;">
+                                    <div class="detail-label" style="margin-bottom: 8px;">Modalità di assolvimento:</div>
+                                    <p style="color: #374151; font-size: 14px; line-height: 1.5;">${book.details.modalita}</p>
+                                </div>
+                            ` : ''}
+                            ${book.details.contenuto ? `
+                                <div style="margin-top: 16px;">
+                                    <div class="detail-label" style="margin-bottom: 8px;">Contenuto:</div>
+                                    <p style="color: #374151; font-size: 14px; line-height: 1.5;">${book.details.contenuto}</p>
+                                </div>
+                            ` : ''}
+                        `;
+                    case 'taxes':
+                        return `
+                            <div class="detail-item">
+                                <span class="detail-label">Imposta di bollo:</span>
+                                <span class="detail-value">${book.details.imposta}</span>
+                            </div>
+                            ${book.details.tassa ? `
+                                <div class="detail-item">
+                                    <span class="detail-label">Tassa CC.GG.:</span>
+                                    <span class="detail-value">${book.details.tassa}</span>
+                                </div>
+                            ` : ''}
+                        `;
+                    case 'auxiliary':
+                        return `
+                            <div style="background: #f8fafc; padding: 16px; border-radius: 8px; border-left: 4px solid #3b82f6;">
+                                <h4 style="color: #1e293b; margin-bottom: 8px; font-weight: 600;">Partitari e Mastrini</h4>
+                                <p style="color: #374151; font-size: 14px; line-height: 1.5; margin-bottom: 12px;">${book.details.ausiliarie}</p>
+                                <div style="background: white; padding: 12px; border-radius: 6px; border: 1px solid #e2e8f0;">
+                                    <strong style="color: #dc2626;">Importante:</strong> Le schede di mastro vanno stampate dopo la chiusura dei conti, che deve comparire nella stampa.
+                                </div>
+                            </div>
+                        `;
+                    case 'conservation':
+                        return `<p style="color: #374151; line-height: 1.6;">${book.details.conservazione}</p>`;
+                    case 'digital':
+                        return `
+                            <div style="background: #fef7cd; padding: 16px; border-radius: 8px; border-left: 4px solid #f59e0b;">
+                                <h4 style="color: #92400e; margin-bottom: 8px; font-weight: 600;">Conservazione Digitale</h4>
+                                <p style="color: #374151; font-size: 14px; line-height: 1.5;">${book.details.digitale}</p>
+                            </div>
+                        `;
+                    default:
+                        return '';
+                }
+            }
+
+            setupDetailEventListeners() {
+                document.querySelectorAll('.detail-section-header').forEach(header => {
+                    header.addEventListener('click', (e) => {
+                        const section = e.currentTarget.closest('.detail-section');
+                        const sectionId = section.getAttribute('data-section');
+                        
+                        this.expandedSections[sectionId] = !this.expandedSections[sectionId];
+                        
+                        if (this.expandedSections[sectionId]) {
+                            section.classList.add('expanded');
+                        } else {
+                            section.classList.remove('expanded');
+                        }
+                    });
+                });
+            }
+        }
+
+        // Initialize app when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            new LibriContabiliApp();
+        });
+    </script>
+</body>
+</html>
